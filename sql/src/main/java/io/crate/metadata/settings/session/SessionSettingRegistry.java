@@ -39,6 +39,7 @@ public class SessionSettingRegistry {
     private static final String SEARCH_PATH_KEY = "search_path";
     public static final String HASH_JOIN_KEY = "enable_hashjoin";
     static final String MAX_INDEX_KEYS = "max_index_keys";
+    static final String OPTIMIZER_RULES = "optimize";
     private static final String SERVER_VERSION_NUM = "server_version_num";
     private static final String SERVER_VERSION = "server_version";
 
@@ -104,6 +105,17 @@ public class SessionSettingRegistry {
                     DataTypes.STRING.getName()
                 )
             )
+        .put(
+            OPTIMIZER_RULES,
+            new SessionSetting<>(
+                objects -> {},
+                objects -> DataTypes.STRING.value(objects),
+                SessionContext::setRule,
+                s -> String.valueOf(s.rule()),
+                () -> String.valueOf(""),
+                "Disable/Enable optimizer rule",
+                DataTypes.STRING.getName())
+        )
             .build();
 
     private static String[] objectsToStringArray(Object[] objects) {

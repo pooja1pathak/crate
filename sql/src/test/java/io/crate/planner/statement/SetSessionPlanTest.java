@@ -37,4 +37,5 @@ public class SetSessionPlanTest extends CrateUnitTest {
             "GLOBAL Cluster setting 'stats.operations_log_size' cannot be used with SET SESSION / LOCAL");
         validateSetting("stats.operations_log_size");
     }
+
 }

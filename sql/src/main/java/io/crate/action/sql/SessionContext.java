@@ -38,6 +38,7 @@ public class SessionContext {
 
     private SearchPath searchPath;
     private boolean hashJoinEnabled = true;
+    private String rule;
 
     /**
      * Creates a new SessionContext suitable to use as system SessionContext
@@ -81,6 +82,14 @@ public class SessionContext {
 
     public void setHashJoinEnabled(boolean hashJoinEnabled) {
         this.hashJoinEnabled = hashJoinEnabled;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    public String getRule() {
+        return rule;
     }
 
     public User user() {

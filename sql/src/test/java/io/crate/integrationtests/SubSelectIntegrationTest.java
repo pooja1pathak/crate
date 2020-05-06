@@ -717,4 +717,13 @@ public class SubSelectIntegrationTest extends SQLTransportIntegrationTest {
         assertThat(printedTable(response.rows()), is("3\n" +
                                                      "2\n"));
     }
+
+    @Test
+    public void testSettings() {
+        execute("SET SESSION optimizer_merge_filters = FALSE;");
+        execute("create table t1 (id int)");
+        execute("insert into t1 (id) values (1), (2)");
+        execute("refresh table t1");
+        execute("select id + 1 from (select id from t1) tt order by 1 desc");
+    }
 }

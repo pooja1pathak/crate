@@ -67,6 +67,10 @@ public class Optimizer {
             done = true;
             Version minVersion = minNodeVersionInCluster.get();
             for (Rule rule : rules) {
+                if (rule.getClass().getSimpleName().equals(txnCtx.sessionSettings().rule())) {
+                    LOGGER.info("Skip rule '" + rule.getClass().getSimpleName() + " as defined in session settings");
+                    continue;
+                }
                 if (minVersion.before(rule.requiredVersion())) {
                     continue;
                 }

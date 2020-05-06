@@ -23,6 +23,7 @@
 package io.crate.planner.statement;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.CaseFormat;
 import io.crate.action.sql.SessionContext;
 import io.crate.analyze.SymbolEvaluator;
 import io.crate.data.InMemoryBatchIterator;
@@ -68,7 +69,7 @@ public class SetSessionPlan implements Plan {
                               Row params,
                               SubQueryResults subQueryResults) throws Exception {
 
-        Function<? super Symbol, Object> eval = x -> SymbolEvaluator.evaluate(plannerContext.transactionContext(),
+        Function<? super Symbol, Object>    eval = x -> SymbolEvaluator.evaluate(plannerContext.transactionContext(),
                                                                               plannerContext.functions(),
                                                                               x,
                                                                               params,
@@ -78,11 +79,19 @@ public class SetSessionPlan implements Plan {
         Assignment<Symbol> assignment = settings.get(0);
         String settingName = eval.apply(assignment.columnName()).toString();
         validateSetting(settingName);
-        SessionSetting<?> sessionSetting = SessionSettingRegistry.SETTINGS.get(settingName);
-        if (sessionSetting == null) {
-            LOGGER.info("SET SESSION STATEMENT WILL BE IGNORED: {}", settingName);
+        if (settingName.startsWith("optimizer_")) {
+            String optimize_ = settingName.replace("optimizer_", "");
+            String ruleName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
+                                                             optimize_);
+            Object apply = eval.apply(assignment.expression());
+            sessionContext.setRule(ruleName);
         } else {
-            sessionSetting.apply(sessionContext, assignment.expressions(), eval);
+            SessionSetting<?> sessionSetting = SessionSettingRegistry.SETTINGS.get(settingName);
+            if (sessionSetting == null) {
+                LOGGER.info("SET SESSION STATEMENT WILL BE IGNORED: {}", settingName);
+            } else {
+                sessionSetting.apply(sessionContext, assignment.expressions(), eval);
+            }
         }
         consumer.accept(InMemoryBatchIterator.empty(SENTINEL), null);
     }
@@ -96,4 +105,6 @@ public class SetSessionPlan implements Plan {
                                                              settingName));
         }
     }
+
+
 }

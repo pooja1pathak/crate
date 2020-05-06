@@ -22,6 +22,7 @@
 
 package io.crate.analyze;
 
+import com.google.common.base.CaseFormat;
 import io.crate.expression.symbol.Literal;
 import io.crate.sql.tree.Assignment;
 import io.crate.sql.tree.SetStatement;
@@ -201,5 +202,12 @@ public class SetAnalyzerTest extends CrateDummyClusterServiceUnitTest {
     public void testSetLicense() throws Exception {
         AnalyzedSetLicenseStatement analysis = analyze("SET LICENSE 'ThisShouldBeAnEncryptedLicenseKey'");
         assertThat(analysis.licenseKey(), isLiteral("ThisShouldBeAnEncryptedLicenseKey"));
+    }
+
+    @Test
+    public void test_set_optimizer_rule() throws Exception {
+        AnalyzedSetStatement analysis = analyze("SET SESSION optimizer_merge_filters = FALSE;");
+        System.out.println("analysis = " + analysis);
+        System.out.println(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, "input_in_snake_case"));
     }
 }

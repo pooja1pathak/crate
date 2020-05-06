@@ -36,22 +36,27 @@ public final class SessionSettings implements Writeable {
     private final String userName;
     private final SearchPath searchPath;
     private final boolean hashJoinsEnabled;
+    private String rule;
 
     public SessionSettings(StreamInput in) throws IOException {
         this.userName = in.readString();
         this.searchPath = SearchPath.createSearchPathFrom(in);
         this.hashJoinsEnabled = in.readBoolean();
+        if (in.readBoolean()) {
+            rule = in.readString();
+        }
     }
 
     @VisibleForTesting
     public SessionSettings(String userName, SearchPath searchPath) {
-        this(userName, searchPath, true);
+        this(userName, searchPath, true, null);
     }
 
-    public SessionSettings(String userName, SearchPath searchPath, boolean hashJoinsEnabled) {
+    public SessionSettings(String userName, SearchPath searchPath, boolean hashJoinsEnabled, String rule) {
         this.userName = userName;
         this.searchPath = searchPath;
         this.hashJoinsEnabled = hashJoinsEnabled;
+        this.rule = rule;
     }
 
     public String userName() {
@@ -70,11 +75,21 @@ public final class SessionSettings implements Writeable {
         return hashJoinsEnabled;
     }
 
+    public String rule() {
+        return rule;
+    }
+
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(userName);
         searchPath.writeTo(out);
         out.writeBoolean(hashJoinsEnabled);
+        if (rule != null) {
+            out.writeBoolean(true);
+            out.writeString(rule);
+        } else {
+            out.writeBoolean(false);
+        }
     }
 
     @Override
@@ -88,11 +103,12 @@ public final class SessionSettings implements Writeable {
         SessionSettings that = (SessionSettings) o;
         return Objects.equals(userName, that.userName) &&
                Objects.equals(searchPath, that.searchPath) &&
-               Objects.equals(hashJoinsEnabled, that.hashJoinsEnabled);
+               Objects.equals(hashJoinsEnabled, that.hashJoinsEnabled) &&
+               Objects.equals(rule, that.rule);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, searchPath, hashJoinsEnabled);
+        return Objects.hash(userName, searchPath, hashJoinsEnabled, rule);
     }
 }
