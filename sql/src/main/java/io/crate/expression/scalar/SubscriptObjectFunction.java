@@ -51,7 +51,7 @@ public class SubscriptObjectFunction extends Scalar<Object, Map<String, Object>>
 
     public static final String NAME = "subscript_obj";
     private static final FuncParams FUNCTION_PARAMS = FuncParams
-        .builder(Param.of(ObjectType.untyped()), Param.of(StringType.INSTANCE))
+        .builder(Param.of(DataTypes.UNTYPED_OBJECT), Param.of(StringType.INSTANCE))
         .withVarArgs(Param.of(StringType.INSTANCE))
         .build();
 

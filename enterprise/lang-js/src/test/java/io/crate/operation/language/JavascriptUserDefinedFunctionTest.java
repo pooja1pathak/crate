@@ -104,7 +104,7 @@ public class JavascriptUserDefinedFunctionTest extends AbstractScalarFunctionsTe
     public void testObjectReturnType() throws Exception {
         registerUserDefinedFunction(
             "f",
-            ObjectType.untyped(),
+            ObjectType.UNTYPED(),
             List.of(),
             "function f() { return JSON.parse('{\"foo\": \"bar\"}'); }");
         assertEvaluate("f()", Map.of("foo", "bar"));
@@ -273,8 +273,8 @@ public class JavascriptUserDefinedFunctionTest extends AbstractScalarFunctionsTe
     public void testNormalizeOnObjectInput() throws Exception {
         registerUserDefinedFunction(
             "f",
-            ObjectType.untyped(),
-            List.of(ObjectType.untyped()),
+            ObjectType.UNTYPED(),
+            List.of(ObjectType.UNTYPED()),
             "function f(x) { return x; }");
         assertNormalize("f({})", isLiteral(Map.of()));
     }
