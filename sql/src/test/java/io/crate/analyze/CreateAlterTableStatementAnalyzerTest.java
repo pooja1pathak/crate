@@ -1343,4 +1343,15 @@ public class CreateAlterTableStatementAnalyzerTest extends CrateDummyClusterServ
             mapToSortedString(stmt.mappingProperties()),
             is("name={position=1, type=keyword}"));
     }
+
+    @Test
+    public void test_create_table_with_time_columns() {
+        BoundCreateTable stmt = analyze("create table tbl (a time, b time without time zone)");
+        assertThat(
+            mapToSortedString(stmt.mappingProperties()),
+            is(
+                "a={format=epoch_millis||strict_date_optional_time, ignore_timezone=true, position=1, type=integer}, " +
+                "b={format=epoch_millis||strict_date_optional_time, ignore_timezone=true, position=2, type=integer}"));
+
+    }
 }

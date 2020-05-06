@@ -669,6 +669,22 @@ public class SelectStatementAnalyzerTest extends CrateDummyClusterServiceUnitTes
     }
 
     @Test
+    public void test_not_time() throws Exception {
+        expectedException.expect(UnsupportedOperationException.class);
+        expectedException.expectMessage("unknown function: op_not(time without time zone)");
+        analyze("select id, name from parted where not time");
+    }
+
+    @Test
+    public void overflow() {
+
+
+
+    }
+
+
+
+    @Test
     public void testJoin() throws Exception {
         AnalyzedRelation relation = analyze("select * from users, users_multi_pk where users.id = users_multi_pk.id");
         assertThat(relation, instanceOf(QueriedSelectRelation.class));
@@ -1887,6 +1903,17 @@ public class SelectStatementAnalyzerTest extends CrateDummyClusterServiceUnitTes
     public void testCastTimestampWithoutTimeZoneFromStringLiteralUsingSQLStandardFormat()  {
         AnalyzedRelation relation = analyze("select timestamp without time zone '2018-12-12 00:00:00'");
         assertThat(relation.outputs().get(0).valueType(), is(DataTypes.TIMESTAMP));
+    }
+
+    @Test
+    public void test_cast_time_from_string_literal()  {
+        AnalyzedRelation relation = analyze("select time without time zone '23:59:59.999+02'");
+        assertThat(relation.outputs().get(0).valueType(), is(DataTypes.TIME));
+
+        // time is always without time zone
+        relation = analyze("select time '23:59:59.999+02'");
+        assertThat(relation.outputs().get(0).valueType(), is(DataTypes.TIME));
+        assertThat(relation.outputs().get(0).toString(), is("86399999"));
     }
 
     @Test

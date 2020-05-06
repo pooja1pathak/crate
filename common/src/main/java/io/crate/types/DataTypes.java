@@ -89,6 +89,7 @@ public final class DataTypes {
     public static Set<String> PRIMITIVE_TYPE_NAMES_WITH_SPACES = Set.of(
         TIMESTAMPZ.getName(),
         TIMESTAMP.getName(),
+        TIME.getName(),
         DOUBLE.getName()
     );
 
@@ -103,6 +104,7 @@ public final class DataTypes {
         INTEGER,
         INTERVAL,
         LONG,
+        TIME,
         TIMESTAMPZ,
         TIMESTAMP
     );
@@ -183,11 +185,11 @@ public final class DataTypes {
      * used to store the value)
      */
     private static final Map<Integer, Set<DataType>> SAFE_CONVERSIONS = Map.of(
-        BYTE.id(), Set.of(SHORT, INTEGER, LONG, TIMESTAMPZ, TIMESTAMP, FLOAT, DOUBLE),
-        SHORT.id(), Set.of(INTEGER, LONG, TIMESTAMPZ, TIMESTAMP, FLOAT, DOUBLE),
-        INTEGER.id(), Set.of(LONG, TIMESTAMPZ, TIMESTAMP, FLOAT, DOUBLE),
+        BYTE.id(), Set.of(SHORT, INTEGER, LONG, TIMESTAMPZ, TIMESTAMP, TIME, FLOAT, DOUBLE),
+        SHORT.id(), Set.of(INTEGER, LONG, TIMESTAMPZ, TIMESTAMP, TIME, FLOAT, DOUBLE),
+        INTEGER.id(), Set.of(LONG, TIMESTAMPZ, TIMESTAMP, TIME, FLOAT, DOUBLE),
         LONG.id(), Set.of(TIMESTAMPZ, TIMESTAMP, DOUBLE),
-        FLOAT.id(), Set.of(DOUBLE));
+        FLOAT.id(), Set.of(TIME, DOUBLE));
 
     public static boolean isArray(DataType<?> type) {
         return type.id() == ArrayType.ID;
@@ -317,6 +319,7 @@ public final class DataTypes {
         entry(INTEGER.getName(), INTEGER),
         entry(LONG.getName(), LONG),
         entry(RowType.EMPTY.getName(), RowType.EMPTY),
+        entry(TIME.getName(), TIME),
         entry(TIMESTAMPZ.getName(), TIMESTAMPZ),
         entry(TIMESTAMP.getName(), TIMESTAMP),
         entry(ObjectType.NAME, ObjectType.untyped()),
@@ -336,6 +339,7 @@ public final class DataTypes {
         entry("string", STRING),
         entry("varchar", STRING),
         entry("character varying", STRING),
+        entry("time", TIME),
         entry("timestamptz", TIMESTAMPZ),
         // The usage of the `timestamp` data type as a data type with time
         // zone is deprecate, use `timestamp with time zone` or `timestamptz`
@@ -376,6 +380,7 @@ public final class DataTypes {
     );
 
     private static final Map<Integer, String> TYPE_IDS_TO_MAPPINGS = Map.ofEntries(
+        entry(TIME.id(), "integer"),
         entry(TIMESTAMPZ.id(), "date"),
         entry(TIMESTAMP.id(), "date"),
         entry(STRING.id(), "text"),
