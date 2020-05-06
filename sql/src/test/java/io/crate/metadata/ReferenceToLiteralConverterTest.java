@@ -27,7 +27,7 @@ import io.crate.expression.symbol.Symbol;
 import io.crate.test.integration.CrateUnitTest;
 import io.crate.types.DataTypes;
 import io.crate.types.ObjectType;
-import org.elasticsearch.common.collect.MapBuilder;
+import io.crate.common.collections.MapBuilder;
 import org.junit.Test;
 
 import static io.crate.testing.SymbolMatchers.isLiteral;
